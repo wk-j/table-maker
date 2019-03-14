@@ -1,5 +1,8 @@
 using System;
 using System.IO;
+using System.Linq;
+using System.Text.RegularExpressions;
+using FloatingCharacter;
 
 namespace TableMaker {
     internal static class ArrayPrinter {
@@ -11,6 +14,7 @@ namespace TableMaker {
         private const string CellTJoint = "┼";
         private const string CellVerticalJointRight = "┤";
         private const string CellVerticalLine = "│";
+        private static char[] FloatChars = Glyph.FloatingCharacters();
 
         private static int GetMaxCellWidth(string[,] arrValues) {
             var maxWidth = 1;
@@ -25,6 +29,10 @@ namespace TableMaker {
             }
 
             return maxWidth;
+        }
+
+        private static int GetFloatingCount(string v) {
+            return v.Count(FloatChars.Contains);
         }
 
         private static string GetDataInTableFormat(string[,] arrValues) {
@@ -46,7 +54,8 @@ namespace TableMaker {
                 var lineWithValues = CellVerticalLine;
                 var line = CellVerticalJointLeft;
                 for (var j = 0; j < dimension2Length; j++) {
-                    var value = arrValues[i, j].PadLeft(maxCellWidth, ' ');
+                    var floatCount = GetFloatingCount(arrValues[i, j]);
+                    var value = arrValues[i, j].PadLeft(maxCellWidth + floatCount, ' ');
                     lineWithValues += string.Format("{0}{1}", value, CellVerticalLine);
                     line += Indent(maxCellWidth);
                     if (j < (dimension2Length - 1)) {

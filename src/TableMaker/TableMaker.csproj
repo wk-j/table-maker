@@ -5,4 +5,8 @@
     <TargetFramework>netcoreapp3.0</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="wk.FloatingCharacter" Version="19.3.14.1829" />
+  </ItemGroup>
+
 </Project>
