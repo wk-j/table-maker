@@ -1,12 +1,14 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp3.0</TargetFramework>
-  </PropertyGroup>
+    <PropertyGroup>
+        <OutputType>Library</OutputType>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <PackageId>wk.TableMaker</PackageId>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="wk.FloatingCharacter" Version="19.3.14.1829" />
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="wk.FloatingCharacter" Version="19.3.14.2014" />
+    </ItemGroup>
 
 </Project>

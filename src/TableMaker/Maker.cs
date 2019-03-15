@@ -5,7 +5,8 @@ using System.Text.RegularExpressions;
 using FloatingCharacter;
 
 namespace TableMaker {
-    internal static class ArrayPrinter {
+    public static class ArrayPrinter {
+
         private const string CellLeftTop = "┌";
         private const string CellRightTop = "┐";
         private const string CellLeftBottom = "└";
