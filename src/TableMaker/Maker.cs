@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -35,6 +36,17 @@ namespace TableMaker {
             return v.Count(FloatChars.Contains);
         }
 
+        private static IDictionary<int, int> MaxCellWidth(string[,] values) {
+            var rows = values.GetLength(0);
+            var columns = values.GetLength(1);
+            var dict = new Dictionary<int, int>();
+            foreach (var item in Enumerable.Range(0, columns)) {
+                var max = Enumerable.Range(0, rows).Select(x => values[x, 0]).Select(x => x.Length).Max();
+                dict[item] = max;
+            }
+            return dict;
+        }
+
         private static string GetDataInTableFormat(string[,] arrValues) {
 
             var formattedString = string.Empty;
@@ -44,6 +56,8 @@ namespace TableMaker {
 
             var dimension1Length = arrValues.GetLength(0);
             var dimension2Length = arrValues.GetLength(1);
+
+            var maxWidth = MaxCellWidth(arrValues);
 
             var maxCellWidth = GetMaxCellWidth(arrValues);
             var indentLength = (dimension2Length * maxCellWidth) + (dimension2Length - 1);
@@ -55,9 +69,12 @@ namespace TableMaker {
                 var line = CellVerticalJointLeft;
                 for (var j = 0; j < dimension2Length; j++) {
                     var floatCount = GetFloatingCount(arrValues[i, j]);
-                    var value = arrValues[i, j].PadLeft(maxCellWidth + floatCount, ' ');
+                    var max = maxWidth[j];
+                    // var value = arrValues[i, j].PadLeft(maxCellWidth + floatCount, ' ');
+                    var value = arrValues[i, j].PadLeft(max + floatCount, ' ');
                     lineWithValues += string.Format("{0}{1}", value, CellVerticalLine);
-                    line += Indent(maxCellWidth);
+                    // line += Indent(maxCellWidth);
+                    line += Indent(max);
                     if (j < (dimension2Length - 1)) {
                         line += CellTJoint;
                     }
