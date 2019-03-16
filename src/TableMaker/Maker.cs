@@ -16,25 +16,10 @@ namespace TableMaker {
         private const string CellTJoint = "┼";
         private const string CellVerticalJointRight = "┤";
         private const string CellVerticalLine = "│";
-        private static char[] FloatChars = Glyph.FloatingCharacters();
-
-        private static int GetMaxCellWidth(string[,] arrValues) {
-            var maxWidth = 1;
-
-            for (var i = 0; i < arrValues.GetLength(0); i++) {
-                for (var j = 0; j < arrValues.GetLength(1); j++) {
-                    var length = arrValues[i, j].Length;
-                    if (length > maxWidth) {
-                        maxWidth = length;
-                    }
-                }
-            }
-
-            return maxWidth;
-        }
+        private static char[] _floatChars = Glyph.FloatingCharacters();
 
         private static int GetFloatingCount(string v) {
-            return v.Count(FloatChars.Contains);
+            return v.Count(_floatChars.Contains);
         }
 
         private static IDictionary<int, int> MaxCellWidth(string[,] values) {
@@ -42,8 +27,11 @@ namespace TableMaker {
             var columns = values.GetLength(1);
             var dict = new Dictionary<int, int>();
             foreach (var item in Enumerable.Range(0, columns)) {
-                var max = Enumerable.Range(0, rows).Select(x => values[x, 0]).Select(x => x.Length).Max();
-                dict[item] = max;
+                var max = Enumerable
+                    .Range(0, rows)
+                    .Select(x => values[x, item])
+                    .Select(x => (x.Length) - GetFloatingCount(x)).Max();
+                dict[item] = max + 3;
             }
             return dict;
         }
@@ -58,23 +46,20 @@ namespace TableMaker {
             var dimension1Length = arrValues.GetLength(0);
             var dimension2Length = arrValues.GetLength(1);
 
-            var maxWidth = MaxCellWidth(arrValues);
+            var maxs = MaxCellWidth(arrValues);
+            var indentLength = maxs.Values.Sum() + maxs.Count - 1;
 
-            var maxCellWidth = GetMaxCellWidth(arrValues);
-            var indentLength = (dimension2Length * maxCellWidth) + (dimension2Length - 1);
-            //printing top line;
+            // printing top line;
             formattedString = $"{CellLeftTop}{Indent(indentLength)}{CellRightTop}{Environment.NewLine}";
 
             for (var i = 0; i < dimension1Length; i++) {
                 var lineWithValues = CellVerticalLine;
                 var line = CellVerticalJointLeft;
                 for (var j = 0; j < dimension2Length; j++) {
+                    var max = maxs[j];
                     var floatCount = GetFloatingCount(arrValues[i, j]);
-                    var max = maxWidth[j];
-                    // var value = arrValues[i, j].PadLeft(maxCellWidth + floatCount, ' ');
                     var value = arrValues[i, j].PadLeft(max + floatCount, ' ');
                     lineWithValues += string.Format("{0}{1}", value, CellVerticalLine);
-                    // line += Indent(maxCellWidth);
                     line += Indent(max);
                     if (j < (dimension2Length - 1)) {
                         line += CellTJoint;
@@ -87,7 +72,7 @@ namespace TableMaker {
                 }
             }
 
-            //printing bottom line
+            // printing bottom line
             formattedString += $"{CellLeftBottom}{Indent(indentLength)}{CellRightBottom}{Environment.NewLine}";
             return formattedString;
         }
