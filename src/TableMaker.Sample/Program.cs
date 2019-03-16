@@ -1,8 +1,9 @@
 ﻿using System;
 using FloatingCharacter;
 using System.Linq;
+using TableMaker;
 
-namespace TableMaker {
+namespace TableMaker.Sample {
     class Program {
         static void Main(string[] args) {
             var excludes = Glyph.FloatingCharacters();
